@@ -8,7 +8,7 @@
 
 import UIKit
 
-class ViewController: UIViewController {
+class ViewController: UIViewController,UITextFieldDelegate {
 
     @IBOutlet weak var textfield: UITextField!
     override func viewDidLoad() {
@@ -17,6 +17,8 @@ class ViewController: UIViewController {
         let kv = KeyBoardView.init()
         self.textfield.inputView = kv
         kv.inputSource = self.textfield
+        
+        textfield.delegate = self
     }
 
     override func didReceiveMemoryWarning() {
@@ -24,6 +26,12 @@ class ViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
 
+    public func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool{
+        
+        print("textField.text:\(textField.text)-----\(string)----\(range)")
+        
+        return true
+    }
 
 }
 

@@ -389,10 +389,87 @@ extension KeyBoardView{
         //UITextField和UITextView
         if(inputSource.isKind(of: UITextField.self)){
             let tmp = inputSource as! UITextField
-            tmp.deleteBackward()
+        
+            var currentOffset = (tmp.text?.count ?? 0)
+            var length = 1
+            //有可能不是输入末尾，且选择了几个字符
+            if let rag = tmp.selectedTextRange {
+                //光标偏移量，即选中开始位置
+                currentOffset = tmp.offset(from: tmp.beginningOfDocument, to: rag.start)
+                //选中结束位置
+                let endOffset =  tmp.offset(from: tmp.beginningOfDocument, to: rag.end)
+                //选中字符长度
+                length = endOffset - currentOffset
+            }
+            
+            //判断是否实现了代理，是否实现了shouldChangeCharactersIn代理
+            if(!(currentOffset == 0 && length == 0 ) && (tmp.text?.count ?? 0) > 0 && tmp.delegate != nil && (tmp.delegate?.responds(to: #selector(UITextFieldDelegate.textField(_:shouldChangeCharactersIn:replacementString:))) ?? false)){
+                
+                if(length == 0 && currentOffset > 0){
+                    currentOffset -= 1
+                }
+                
+                //至少删除一个字符
+                if(length == 0){
+                    length = 1
+                }
+                
+                //删除位置
+                let range = NSRange.init(location:currentOffset, length: length)
+                
+                //代理是否允许输入字符
+                let ret = tmp.delegate?.textField?(tmp, shouldChangeCharactersIn: range, replacementString: "") ?? false
+                
+                //允许输入字符时，直接删除
+                if(ret){
+                   tmp.deleteBackward()
+                }
+            }else{
+                //直接删除
+                tmp.deleteBackward()
+            }
+            
         }else if(inputSource.isKind(of: UITextView.self)){
             let tmp = inputSource as! UITextView
-            tmp.deleteBackward()
+            
+            var currentOffset = (tmp.text?.count ?? 0)
+            var length = 1
+            //有可能不是输入末尾，且选择了几个字符
+            if let rag = tmp.selectedTextRange {
+                //光标偏移量，即选中开始位置
+                currentOffset = tmp.offset(from: tmp.beginningOfDocument, to: rag.start)
+                //选中结束位置
+                let endOffset =  tmp.offset(from: tmp.beginningOfDocument, to: rag.end)
+                //选中字符长度
+                length = endOffset - currentOffset
+            }
+            
+            //判断是否实现了代理，是否实现了shouldChangeTextIn代理
+            if(!(currentOffset == 0 && length == 0 ) && (tmp.text?.count ?? 0) > 0 && tmp.delegate != nil && (tmp.delegate?.responds(to: #selector(UITextViewDelegate.textView(_:shouldChangeTextIn:replacementText:))) ?? false)){
+
+                if(length == 0 && currentOffset > 0){
+                    currentOffset -= 1
+                }
+                
+                //至少删除一个字符
+                if(length == 0){
+                    length = 1
+                }
+                
+                //删除位置
+                let range = NSRange.init(location:currentOffset, length: length)
+                
+                //代理是否允许输入字符
+                let ret = tmp.delegate?.textView?(tmp, shouldChangeTextIn: range, replacementText: "") ?? false
+                
+                //允许输入字符时，直接删除
+                if(ret){
+                    tmp.deleteBackward()
+                }
+            }else{
+                //直接删除
+                tmp.deleteBackward()
+            }
         }
     }
     
