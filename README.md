@@ -5,4 +5,4 @@ let kv = KeyBoardView.init()<br>
 self.textfield.inputView = kv<br>
 kv.inputSource = self.textfield<br>
 
-![](http://img.blog.csdn.net/20180226164449943)
+![](https://yqh1988.oss-cn-beijing.aliyuncs.com/yqh/1111.gif)
